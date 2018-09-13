@@ -28,7 +28,9 @@
 		
 		<!-- 如果session获取的方式是getCurrentSession的时候，需要添加此属性，代表jdbc事务，如果是jta全局事务，需要写jta，单纯的opensession不需要添加这个属性 -->
 		<property name="hibernate.current_session_context_class">thread</property>
-		
+		<!-- 指定映射文件的路径 -->
+		<mapping resource="com/jinan/www/entity/employee.hbm.xml"/>
+		<mapping resource="com/jinan/www/entity/project.hbm.xml"/>
     </session-factory>
 
 </hibernate-configuration>

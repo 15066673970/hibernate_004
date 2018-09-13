@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping >
+	<class name="com.jinan.www.entity.Project" table="project">
+		<id name="proid" column="proid" type="java.lang.Integer">
+			<generator class="assigned"></generator>
+		</id>
+		<property name="proname" type="java.lang.String">
+			<column name="proname" length="20" not-null="true"></column>
+		</property>
+		<!-- 配置多对多关联关系 -->
+		<set name="employees" table="proemp" cascade="all">
+			<key column="rproid"></key><!--关联的外键  ：当前的这个映射文件实体类所对应的关联关系表的外键id  -->
+			<many-to-many class="com.jinan.www.entity.Employee" column="rempid"></many-to-many><!-- 集合属性当中的持久化类 持久化类所对应的关联外键 -->
+		</set>
+	</class>
+</hibernate-mapping>
