@@ -148,8 +148,59 @@
 		也可以方便的由班级查找到其所包含学生的信息
 			
 ---4.多对多映射
+		1,基本的hibernate配置，拷贝hibernate的jar包，lib-required文件夹下的必须得jar文件。拷贝cfg文件和hbm文件，方便后期修改。
+		2，创建持久化类，多对多的关联关系，那么分别需要在两个实体类中都添加对方的set集合属性。创建持久化对象映射文件。通过set标签，来配置
+		多对多的关联关系。多对多的关联关系需要用第三张关联关系表来体现。并且关联关系表中的字段都是外键去关联每张表里面的主键。参考sql脚本。
+			<set name="projects" table="proemp" inverse="true"><!-- 关联关系的维护由project方来维护 -->
+				<key column="rempid"></key><!-- 关联的外键，当前的这个映射文件对应的关联关系表中对应的外键id -->
+				<many-to-many class="com.jinan.www.entity.Project" column="rproid"></many-to-many><!-- 集合属性中的持久化类，持久化类所对应的关联外键 -->
+			</set>	
+			把映射文件的物理路径加入到cfg文件中。
+			<mapping resource="com/jinan/www/entity/employee.hbm.xml"/>
+		3，编写测试类。
+			cfg文件，
+			HibernateUtil.java，
+			Employee.java,
+			Project.java,
+			employee.hbm.xml,
+			project.hbm.xml,
+			Test.java		
 ---5.注解
 ---6.缓存策略
+	1，hibernate一级缓存又称为Session缓存，会话级缓存，通过Session从数据库查询实体时会把实体在内存中存储起来，下一次查询同一实体时不再从数据库获取，而从内存中获取，这就是缓存。
+	一级缓存和session的生命周期是一样的，session销毁，一级缓存就销毁了。一级缓存的数据可适用范围在当前会话之内。
+		一级缓存无法取消，用两个方法管理
+		evict() :用于将某个对象从Session的一级缓存中清除，清除缓存中指定的对象。
+		clear():用于将一级缓存中的所有对象全部清除。
+		
+		Query query = session.createQuery("from Employee");
+		List<Employee> list = query.list();
+		for(Employee employee:list){
+			syso(employee.getName());
+		}
+		
+		Iterator it = query.iterate();
+		while(it.hasNext()){
+			syso(it.next().getName());
+			}
+		当使用query对象查询所有的数据时，query对象的list方法和iterator()方法虽然发出的sql语句不一样，但是list没有使用一级缓存，而iterater会使用到。
+		
+	2,有些常用的数据,在一个session中缓存后,我们希望在其他session中能够直接使用,而不用再次缓存怎么办.
+		使用更高级别的二级缓存,每个session共用的缓存。
+		
+		二级缓存的配置步骤：
+			添加二级缓存对应的jar包
+			在hibernate配置文件中添加Provier的描述信息
+	 		添加二级缓存的属性配置文件
+			在需要被缓存的表所对应的映射文件中添加<cache/>标签。
+				<cache/>标签的详细介绍：
+					usage：指定缓存策略，可选的策略包括：transactional,read-write,nonstrict-read-write,read-only.
+					include:all ,non-lazy
+		
+	3，总结：1，hibernate的缓存能提高检索效率
+			2，hibernate的缓存分为一级缓存和二级缓存，一级缓存是会话级缓存，二级缓存是应用级缓存。
+			3，hibernate的混存在提高检索的同时，也会增加服务器的消耗，所以要注意缓存的使用策略.	
+		
 ---7.数据库连接池
 ---8.逆向工程，正向工程
 ---9.延迟加载。
